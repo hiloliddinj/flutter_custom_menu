@@ -34,23 +34,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onSwipeUpMaxFinished() {
     _timer = Timer.periodic(
-      const Duration(milliseconds: 2),
+      const Duration(milliseconds: 1),
       (Timer t) {
-        print("=>>> Value: $_value");
+        //print("=>>> Value: $_value");
         if (_value > 1) {
           setState(() {
             _value--;
             if (_value < 10) {
               _whiteCircleColor = Colors.white.withOpacity(_value / 10);
             }
-
           });
         } else {
           setState(() {
             _whiteCircleColor = Colors.white.withOpacity(0);
           });
-         _timer?.cancel();
-         _timer = null;
+          _timer?.cancel();
+          _timer = null;
         }
       },
     );
@@ -166,85 +165,100 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          if (!_menuIsShowing) SafeArea(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 270,
-                child: RotatedBox(
-                  quarterTurns: -1,
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      activeTrackColor: Colors.black.withOpacity(0),
-                      inactiveTrackColor: Colors.black.withOpacity(0),
-                      trackShape: const RectangularSliderTrackShape(),
-                      trackHeight: 4.0,
-                      thumbColor: _constMenuBackgroundColor,
-                      thumbShape:
-                          RoundSliderThumbShape(enabledThumbRadius: _enabledThumbRadius,),
-                      overlayColor: Colors.black.withOpacity(0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 1.0),
-                    ),
-                    child: Slider(
-                      value: _value,
-                      onChanged: (newValue) {
-                        setState(() {
-                          debugPrint(
-                              "Value: ${_value.toString()}, newValue: $newValue");
-                          _value = newValue;
-                          _menuBackgroundColor =
-                              _constMenuBackgroundColor.withOpacity(_value / 100);
+          if (!_menuIsShowing)
+            SafeArea(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: SizedBox(
+                  height: 270,
+                  child: RotatedBox(
+                    quarterTurns: -1,
+                    child: SliderTheme(
+                      data: SliderTheme.of(context).copyWith(
+                        activeTrackColor: Colors.black.withOpacity(0),
+                        inactiveTrackColor: Colors.black.withOpacity(0),
+                        trackShape: const RectangularSliderTrackShape(),
+                        trackHeight: 4.0,
+                        thumbColor: _constMenuBackgroundColor,
+                        thumbShape: RoundSliderThumbShape(
+                          enabledThumbRadius: _enabledThumbRadius,
+                        ),
+                        overlayColor: Colors.black.withOpacity(0),
+                        overlayShape:
+                            const RoundSliderOverlayShape(overlayRadius: 1.0),
+                      ),
+                      child: Slider(
+                        value: _value,
+                        onChanged: (newValue) {
+                          setState(() {
+                            // debugPrint(
+                            //     "Value: ${_value.toString()}, newValue: $newValue");
+                            _value = newValue;
+                            _menuBackgroundColor = _constMenuBackgroundColor
+                                .withOpacity(_value / 100);
 
-                          if (_value >= 100 && !_falling) {
-                            _menuIsShowing = true;
-                            _falling = true;
-                            _onSwipeUpMaxFinished();
-                          }
-                        });
-                      },
-                      min: 0,
-                      max: 100,
+                            if (_value >= 100 && !_falling) {
+                              _menuIsShowing = true;
+                              _falling = true;
+                              _onSwipeUpMaxFinished();
+                            }
+                          });
+                        },
+                        min: 0,
+                        max: 100,
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          if (_menuIsShowing) MenuView(
-            opacity: 1 -_value / 100,
-            onCanceled: () {
-              setState(() {
-                _menuIsShowing = false;
-                _menuBackgroundColor = _constMenuBackgroundColor.withOpacity(0);
-                _falling = false;
-                _whiteCircleColor = Colors.white;
-              });
-            },
-            buttonsList: [
-              CustomTextButton(title: 'Menu 1', opacity: 1 -_value / 100,),
-              CustomTextButton(title: 'Menu 2', opacity: 1 - _value / 100,),
-              CustomTextButton(title: 'Menu 3', opacity: 1 - _value / 100,),
-              // CustomTextButton(title: 'Menu 4'),
-              // CustomTextButton(title: 'Menu 5'),
-              // CustomTextButton(title: 'Menu 6'),
-              // CustomTextButton(title: 'Menu 7'),
-              // CustomTextButton(title: 'Menu 8'),
-              // CustomTextButton(title: 'Menu 9'),
-              // CustomTextButton(title: 'Menu 10'),
-            ],
-          ),
+          if (_menuIsShowing)
+            MenuView(
+              opacity: 1 - _value / 100,
+              onCanceled: () {
+                setState(() {
+                  _menuIsShowing = false;
+                  _menuBackgroundColor =
+                      _constMenuBackgroundColor.withOpacity(0);
+                  _falling = false;
+                  _whiteCircleColor = Colors.white;
+                });
+              },
+              buttonsList: [
+                CustomTextButton(
+                  title: 'Menu 1',
+                  opacity: 1 - _value / 100,
+                ),
+                CustomTextButton(
+                  title: 'Menu 2',
+                  opacity: 1 - _value / 100,
+                ),
+                CustomTextButton(
+                  title: 'Menu 3',
+                  opacity: 1 - _value / 100,
+                ),
+                // CustomTextButton(title: 'Menu 4'),
+                // CustomTextButton(title: 'Menu 5'),
+                // CustomTextButton(title: 'Menu 6'),
+                // CustomTextButton(title: 'Menu 7'),
+                // CustomTextButton(title: 'Menu 8'),
+                // CustomTextButton(title: 'Menu 9'),
+                // CustomTextButton(title: 'Menu 10'),
+              ],
+            ),
         ],
       ),
     );
   }
 
   Widget _customClip() {
-    print('Container Height: ${(_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble()}, _value: $_value');
+    //print('Container Height: ${(_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble()}, _value: $_value');
     return ClipPath(
       clipper: LiftUpClipper(controlX: _value, falling: _falling),
       child: Container(
-        height: (_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble() - 2,
-        width: MediaQuery.of(context).size.width / 2 - _enabledThumbRadius /2,
+        height:
+            (_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble() - 2,
+        width: MediaQuery.of(context).size.width / 2 - _enabledThumbRadius / 2,
         color: _menuBackgroundColor,
       ),
     );
