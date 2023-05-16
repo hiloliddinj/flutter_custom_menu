@@ -32,7 +32,9 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _falling = false;
   bool _menuIsShowing = false;
 
-  void _onSwipeUpMaxFinished() {
+  void _onSwipeUpMaxFinished({required bool finished}) {
+    _menuIsShowing = finished;
+    _falling = true;
     _timer = Timer.periodic(
       const Duration(milliseconds: 1),
       (Timer t) {
@@ -47,12 +49,25 @@ class _HomeScreenState extends State<HomeScreen> {
         } else {
           setState(() {
             _whiteCircleColor = Colors.white.withOpacity(0);
+            if (!finished) {
+              _reset();
+            }
           });
           _timer?.cancel();
           _timer = null;
         }
       },
     );
+  }
+
+  void _reset() {
+    setState(() {
+      _menuIsShowing = false;
+      _menuBackgroundColor =
+          _constMenuBackgroundColor.withOpacity(0);
+      _falling = false;
+      _whiteCircleColor = Colors.white;
+    });
   }
 
   @override
@@ -132,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                height: availableHeight + 2,
+                height: availableHeight,
                 color: _menuBackgroundColor,
                 child: Align(
                   alignment: Alignment.bottomCenter,
@@ -198,11 +213,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 .withOpacity(_value / 100);
 
                             if (_value >= 100 && !_falling) {
-                              _menuIsShowing = true;
-                              _falling = true;
-                              _onSwipeUpMaxFinished();
+                              _onSwipeUpMaxFinished(finished: true);
                             }
                           });
+                        },
+                        onChangeEnd: (value) {
+                          _onSwipeUpMaxFinished(finished: false);
                         },
                         min: 0,
                         max: 100,
@@ -215,15 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_menuIsShowing)
             MenuView(
               opacity: 1 - _value / 100,
-              onCanceled: () {
-                setState(() {
-                  _menuIsShowing = false;
-                  _menuBackgroundColor =
-                      _constMenuBackgroundColor.withOpacity(0);
-                  _falling = false;
-                  _whiteCircleColor = Colors.white;
-                });
-              },
+              onCanceled: _reset,
               buttonsList: [
                 CustomTextButton(
                   title: 'Menu 1',
@@ -273,12 +281,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _customClip() {
+    double height = (_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble() - 2;
+    if (height < 0) {
+      height = 0;
+    }
     //print('Container Height: ${(_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble()}, _value: $_value');
     return ClipPath(
       clipper: LiftUpClipper(controlX: _value, falling: _falling),
       child: Container(
-        height:
-            (_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble() - 2,
+        height: height,
         width: MediaQuery.of(context).size.width / 2 - _enabledThumbRadius / 2,
         color: _menuBackgroundColor,
       ),
