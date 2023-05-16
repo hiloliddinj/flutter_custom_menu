@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class BBIconButton extends StatelessWidget {
   const BBIconButton({
     Key? key,
-    required this.onPressed,
+    this.onPressed,
     required this.icon,
   }) : super(key: key);
 
