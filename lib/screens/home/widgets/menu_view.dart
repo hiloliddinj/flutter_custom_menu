@@ -7,13 +7,24 @@ class MenuView extends StatelessWidget {
     Key? key,
     required this.onCanceled,
     required this.buttonsList,
+    required this.opacity,
   }) : super(key: key);
 
   final void Function()? onCanceled;
   final List<Widget> buttonsList;
+  final double opacity;
 
   @override
   Widget build(BuildContext context) {
+
+    double internalOpacity = opacity;
+
+    if (opacity < 0) {
+      internalOpacity = 0;
+    } else if (opacity > 1) {
+      internalOpacity = 1;
+    }
+
     return SafeArea(
       child: Center(
         child: Column(
@@ -26,6 +37,7 @@ class MenuView extends StatelessWidget {
                 image: AssetImage(
                   IconConst.cancel,
                 ),
+                opacity: AlwaysStoppedAnimation(internalOpacity),
               ),
             ),
             Column(

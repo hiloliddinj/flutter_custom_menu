@@ -16,33 +16,50 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  double value = 0;
+  double _value = 0;
 
-  Color _blueColor = Colors.blue.shade400.withOpacity(0);
+  ///Manu background color
+  final _constMenuBackgroundColor = Colors.blue.shade400;
+
+  ///Button Size
+  final double _enabledThumbRadius = 30;
+
+  Color _menuBackgroundColor = Colors.blue.shade400.withOpacity(0);
+  Color _whiteCircleColor = Colors.white;
   double _iconsSpacer = 0;
 
   Timer? _timer;
   bool _falling = false;
   bool _menuIsShowing = false;
 
-  double _enabledThumbRadius = 30;
-
-
   void _onSwipeUpMaxFinished() {
     _timer = Timer.periodic(
       const Duration(milliseconds: 2),
       (Timer t) {
-        print("=>>> Value: $value");
-        if (value > 1) {
+        print("=>>> Value: $_value");
+        if (_value > 1) {
           setState(() {
-            value--;
+            _value--;
+            if (_value < 10) {
+              _whiteCircleColor = Colors.white.withOpacity(_value / 10);
+            }
+
           });
         } else {
+          setState(() {
+            _whiteCircleColor = Colors.white.withOpacity(0);
+          });
          _timer?.cancel();
          _timer = null;
         }
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _menuBackgroundColor = _constMenuBackgroundColor.withOpacity(0);
   }
 
   @override
@@ -57,12 +74,12 @@ class _HomeScreenState extends State<HomeScreen> {
         AppBar().preferredSize.height -
         MediaQuery.of(context).padding.top -
         (_falling ? 0 : 80) -
-        (value * 200 / 100).round().toDouble();
+        (_value * 200 / 100).round().toDouble();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Custom Menu Demo'),
-        backgroundColor: Colors.blue,
+        backgroundColor: _constMenuBackgroundColor,
       ),
       body: Stack(
         children: [
@@ -116,8 +133,22 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                height: availableHeight,
-                color: _blueColor,
+                height: availableHeight + 2,
+                color: _menuBackgroundColor,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Transform.translate(
+                    offset: Offset(0, _enabledThumbRadius / 2),
+                    child: Container(
+                      width: _enabledThumbRadius,
+                      height: _enabledThumbRadius,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _whiteCircleColor,
+                      ),
+                    ),
+                  ),
+                ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
@@ -148,23 +179,23 @@ class _HomeScreenState extends State<HomeScreen> {
                       inactiveTrackColor: Colors.black.withOpacity(0),
                       trackShape: const RectangularSliderTrackShape(),
                       trackHeight: 4.0,
-                      thumbColor: Colors.blue.shade400,
+                      thumbColor: _constMenuBackgroundColor,
                       thumbShape:
                           RoundSliderThumbShape(enabledThumbRadius: _enabledThumbRadius,),
                       overlayColor: Colors.black.withOpacity(0),
                       overlayShape: const RoundSliderOverlayShape(overlayRadius: 1.0),
                     ),
                     child: Slider(
-                      value: value,
+                      value: _value,
                       onChanged: (newValue) {
                         setState(() {
                           debugPrint(
-                              "Value: ${value.toString()}, newValue: $newValue");
-                          value = newValue;
-                          _blueColor =
-                              Colors.blue.shade400.withOpacity(value / 100);
+                              "Value: ${_value.toString()}, newValue: $newValue");
+                          _value = newValue;
+                          _menuBackgroundColor =
+                              _constMenuBackgroundColor.withOpacity(_value / 100);
 
-                          if (value >= 100 && !_falling) {
+                          if (_value >= 100 && !_falling) {
                             _menuIsShowing = true;
                             _falling = true;
                             _onSwipeUpMaxFinished();
@@ -180,17 +211,19 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           if (_menuIsShowing) MenuView(
+            opacity: 1 -_value / 100,
             onCanceled: () {
               setState(() {
                 _menuIsShowing = false;
-                _blueColor = Colors.blue.shade400.withOpacity(0);
+                _menuBackgroundColor = _constMenuBackgroundColor.withOpacity(0);
                 _falling = false;
+                _whiteCircleColor = Colors.white;
               });
             },
-            buttonsList: const [
-              CustomTextButton(title: 'Menu 1'),
-              CustomTextButton(title: 'Menu 2'),
-              CustomTextButton(title: 'Menu 3'),
+            buttonsList: [
+              CustomTextButton(title: 'Menu 1', opacity: 1 -_value / 100,),
+              CustomTextButton(title: 'Menu 2', opacity: 1 - _value / 100,),
+              CustomTextButton(title: 'Menu 3', opacity: 1 - _value / 100,),
               // CustomTextButton(title: 'Menu 4'),
               // CustomTextButton(title: 'Menu 5'),
               // CustomTextButton(title: 'Menu 6'),
@@ -206,13 +239,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _customClip() {
-
+    print('Container Height: ${(_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble()}, _value: $_value');
     return ClipPath(
-      clipper: LiftUpClipper(controlX: value, falling: _falling),
+      clipper: LiftUpClipper(controlX: _value, falling: _falling),
       child: Container(
-        height: (_falling ? 0 : 80) + (value * 200 / 100).round().toDouble(),
+        height: (_falling ? 0 : 80) + (_value * 200 / 100).round().toDouble() - 2,
         width: MediaQuery.of(context).size.width / 2 - _enabledThumbRadius /2,
-        color: _blueColor,
+        color: _menuBackgroundColor,
       ),
     );
   }
