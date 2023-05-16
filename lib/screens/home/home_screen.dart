@@ -237,13 +237,34 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: 'Menu 3',
                   opacity: 1 - _value / 100,
                 ),
-                // CustomTextButton(title: 'Menu 4'),
-                // CustomTextButton(title: 'Menu 5'),
-                // CustomTextButton(title: 'Menu 6'),
-                // CustomTextButton(title: 'Menu 7'),
-                // CustomTextButton(title: 'Menu 8'),
-                // CustomTextButton(title: 'Menu 9'),
-                // CustomTextButton(title: 'Menu 10'),
+                // CustomTextButton(
+                //   title: 'Menu 4',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 5',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 6',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 7',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 8',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 9',
+                //   opacity: 1 - _value / 100,
+                // ),
+                // CustomTextButton(
+                //   title: 'Menu 10',
+                //   opacity: 1 - _value / 100,
+                // ),
               ],
             ),
         ],
